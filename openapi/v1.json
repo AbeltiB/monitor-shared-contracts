@@ -10,6 +10,102 @@
     }
   ],
   "paths": {
+    "/api/detected-events": {
+      "post": {
+        "tags": [
+          "DetectedEvents"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDetectedEventRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "DetectedEvents"
+        ],
+        "parameters": [
+          {
+            "name": "stationId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DetectedEvent"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/bootstrap-admin": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BootstrapAdminRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/stations": {
       "get": {
         "tags": [
@@ -335,20 +431,10 @@
         }
       }
     },
-    "/api/detected-events": {
+    "/api/detected-events/review-queue": {
       "get": {
         "tags": [
           "DetectedEvents"
-        ],
-        "parameters": [
-          {
-            "name": "stationId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
         ],
         "responses": {
           "200": {
@@ -365,16 +451,29 @@
             }
           }
         }
-      },
+      }
+    },
+    "/api/detected-events/{id}/review": {
       "post": {
         "tags": [
           "DetectedEvents"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
         ],
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateDetectedEventRequest"
+                "$ref": "#/components/schemas/ReviewDecisionRequest"
               }
             }
           },
@@ -424,6 +523,55 @@
         "tags": [
           "Reconciliation"
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/footage-uploads": {
+      "post": {
+        "tags": [
+          "FootageUploads"
+        ],
+        "parameters": [
+          {
+            "name": "stationId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "startedAt",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -522,6 +670,21 @@
             "format": "uuid"
           },
           "name": {
+            "type": "string"
+          }
+        }
+      },
+      "BootstrapAdminRequest": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
             "type": "string"
           }
         }
@@ -883,6 +1046,28 @@
               "null",
               "string"
             ]
+          },
+          "reviewStatus": {
+            "$ref": "#/components/schemas/ReviewStatus"
+          }
+        }
+      },
+      "IFormFile": {
+        "type": "string",
+        "format": "binary"
+      },
+      "LoginRequest": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
           }
         }
       },
@@ -941,6 +1126,24 @@
           "WrongVersion"
         ]
       },
+      "ReviewDecisionRequest": {
+        "required": [
+          "approve"
+        ],
+        "type": "object",
+        "properties": {
+          "approve": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ReviewStatus": {
+        "enum": [
+          "Pending",
+          "Confirmed",
+          "Rejected"
+        ]
+      },
       "Station": {
         "required": [
           "name"
@@ -984,6 +1187,12 @@
   },
   "tags": [
     {
+      "name": "DetectedEvents"
+    },
+    {
+      "name": "Auth"
+    },
+    {
       "name": "Stations"
     },
     {
@@ -999,10 +1208,10 @@
       "name": "Contracts"
     },
     {
-      "name": "DetectedEvents"
+      "name": "Reconciliation"
     },
     {
-      "name": "Reconciliation"
+      "name": "FootageUploads"
     }
   ]
 }

@@ -15,7 +15,7 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://npm.pkg.github.com"
-          scope: "@monitor"
+          scope: "@abeltib"
       - run: npm ci
       - run: npm run build
       - run: npm run typecheck
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://npm.pkg.github.com"
-          scope: "@monitor"
+          scope: "@abeltib"
       - run: npm ci
       - run: npm run build
       # Bump package.json's version by hand before merging when you want a new release —

@@ -1,4 +1,4 @@
-# @monitor/shared-contracts
+# @abeltib/monitor-shared-contracts
 
 OpenAPI spec + generated TypeScript client/types for [Monitor](../Monitor%20—%20TV%20Ad%20Verification%20Platform%20PRD.md)'s
 Core API. Published as a private package so `monitor-internal`, `monitor-advertiser`,
@@ -28,11 +28,19 @@ CI does the same via a second `actions/checkout` of `monitor-api` (see `.github/
 ## Usage from a frontend
 
 ```ts
-import { createMonitorClient } from "@monitor/shared-contracts";
+import { createMonitorClient } from "@abeltib/monitor-shared-contracts";
 
 const api = createMonitorClient(process.env.NEXT_PUBLIC_API_BASE_URL!);
 const { data, error } = await api.GET("/health");
 ```
+
+## Naming — a GitHub Packages constraint, not a preference
+
+The npm scope is `@abeltib`, matching the GitHub account that owns these repos, not `@monitor`.
+GitHub Packages' default `GITHUB_TOKEN`-based publish only has permission when the scope matches
+the owning user/org — `@monitor/...` published with a 403 ("no such installation") until this was
+renamed. Consuming repos (`monitor-internal` and later advertiser/agency/station) must depend on
+`@abeltib/monitor-shared-contracts`, not `@monitor/shared-contracts`.
 
 ## Open item
 

@@ -5,9 +5,9 @@ Core API. Published as a private package so `monitor-internal`, `monitor-adverti
 `monitor-agency` and `monitor-station` never hand-drift from `monitor-api` (PRD §2) — a field
 renamed in the API becomes a type error here, not a silent bug in four unrelated frontends.
 
-**Status:** Phase 0 — empty spec (`monitor-api` has no domain endpoints yet, just `/health`),
-pipeline proven end to end. Real types land as Phase 1 adds `ad_creatives`/`contracts`/
-`detected_events` endpoints.
+**Status:** Phase 1 — real types for `monitor-api`'s full Phase 1 surface (stations, agencies,
+advertisers, ad_creatives, contracts, detected_events, reconciliation_results), synced and
+codegen'd from a live, migrated API. Version `0.2.0`.
 
 ## How the spec gets here
 
@@ -23,7 +23,9 @@ bash scripts/sync-openapi.sh
 npm run build
 ```
 
-CI does the same via a second `actions/checkout` of `monitor-api` (see `.github/workflows/ci.yml`).
+CI builds against whatever `openapi/v1.json` is currently committed here — it does **not** check
+out `monitor-api` itself (see the "Open item" below). Run the sync command above and commit the
+result before pushing, or CI will build/publish against a stale spec.
 
 ## Usage from a frontend
 

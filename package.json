@@ -1,6 +1,6 @@
 {
   "name": "@abeltib/monitor-shared-contracts",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "OpenAPI spec + generated TypeScript client/types for Monitor's Core API, consumed by monitor-internal/advertiser/agency/station so they never hand-drift from monitor-api.",
   "type": "module",
   "main": "dist/client.js",
